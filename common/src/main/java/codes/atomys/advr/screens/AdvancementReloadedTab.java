@@ -7,8 +7,7 @@ import com.google.common.collect.Maps;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,16 +29,16 @@ import org.jetbrains.annotations.Nullable;
  * </p>
  * <p>
  * The tab can be created using the
- * {@link #create(Minecraft, AdvancementReloadedScreen, int, AdvancementNode)}
+ * {@link #create(Minecraft, AdvancementReloadedScreen, int, Advancement)}
  * method, which initializes the tab with the given parameters. The tab's
  * position can be set using the {@link #setPos(int, int)} method, and it can be
  * rendered using the {@link #render(GuiGraphics, int, int)} method.
  * </p>
  * <p>
  * The tab contains a map of widgets, each representing an advancement. These
- * widgets can be added using the {@link #addAdvancement(AdvancementNode)}
+ * widgets can be added using the {@link #addAdvancement(Advancement)}
  * method, and the widget associated with a specific advancement can be
- * retrieved using the {@link #getWidget(AdvancementHolder)} method.
+ * retrieved using the {@link #getWidget(Advancement)} method.
  * </p>
  * <p>
  * The tab also provides methods for drawing the background and icon, rendering
@@ -50,24 +49,22 @@ import org.jetbrains.annotations.Nullable;
  * @see AdvancementReloadedScreen
  * @see AdvancementReloadedWidget
  * @see TabPlacement
- * @see AdvancementNode
+ * @see Advancement
  * @see ReloadedDisplayInfo
  */
 public class AdvancementReloadedTab {
-  private static final ResourceLocation SELECTED_IDENTIFIER = ResourceLocation
-      .withDefaultNamespace("advancements/task_frame_obtained");
-  private static final ResourceLocation UNSELECTED_IDENTIFIER = ResourceLocation
-      .withDefaultNamespace("advancements/task_frame_unobtained");
+  private static final ResourceLocation SELECTED_IDENTIFIER = new ResourceLocation("textures/gui/advancements/widgets.png");
+  private static final ResourceLocation UNSELECTED_IDENTIFIER = new ResourceLocation("textures/gui/advancements/widgets.png");
 
   private final Minecraft client;
   private final AdvancementReloadedScreen screen;
   private final TabPlacement type;
-  private final AdvancementNode root;
+  private final Advancement root;
   private final ReloadedDisplayInfo display;
   private final ItemStack icon;
   private final Component title;
   private final AdvancementReloadedWidget rootWidget;
-  private final Map<AdvancementHolder, AdvancementReloadedWidget> widgets = Maps.newLinkedHashMap();
+  private final Map<Advancement, AdvancementReloadedWidget> widgets = Maps.newLinkedHashMap();
   private int index;
   private double originX;
   private double originY;
@@ -95,7 +92,7 @@ public class AdvancementReloadedTab {
    * @param display the display information for the tab
    */
   public AdvancementReloadedTab(final Minecraft client, final AdvancementReloadedScreen screen,
-      final TabPlacement type, final int index, final AdvancementNode root, final ReloadedDisplayInfo display) {
+      final TabPlacement type, final int index, final Advancement root, final ReloadedDisplayInfo display) {
     this.client = client;
     this.screen = screen;
     this.type = type;
@@ -105,7 +102,7 @@ public class AdvancementReloadedTab {
     this.icon = display.getIcon();
     this.title = display.getTitle();
     this.rootWidget = new AdvancementReloadedWidget(this, client, root, display);
-    this.addWidget(this.rootWidget, root.holder());
+    this.addWidget(this.rootWidget, root);
   }
 
   /**
@@ -162,7 +159,7 @@ public class AdvancementReloadedTab {
    *
    * @return the root advancement of the tab
    */
-  public AdvancementNode getRoot() {
+  public Advancement getRoot() {
     return this.root;
   }
 
@@ -224,7 +221,7 @@ public class AdvancementReloadedTab {
 
     context.pose().pushPose();
     context.pose().translate(0.0D, 0.0D, 220.0D);
-    context.blitSprite(texture, this.tab_x, this.tab_y, this.type.getWidth(), this.type.getHeight());
+    context.blitNineSliced(texture, this.tab_x, this.tab_y, this.type.getWidth(), this.type.getHeight(), 4, 26, 26, 0, selected ? 128 : 154);
     context.pose().popPose();
 
   }
@@ -430,8 +427,8 @@ public class AdvancementReloadedTab {
    */
   @Nullable
   public static AdvancementReloadedTab create(final Minecraft client, final AdvancementReloadedScreen screen, int index,
-      final AdvancementNode root) {
-    final Optional<DisplayInfo> optional = root.advancement().display();
+      final Advancement root) {
+    final Optional<DisplayInfo> optional = Optional.ofNullable(root.getDisplay());
     if (optional.isEmpty()) {
       return null;
     } else {
@@ -488,12 +485,12 @@ public class AdvancementReloadedTab {
    *
    * @param advancement the advancement node to add
    */
-  public void addAdvancement(final AdvancementNode advancement) {
-    final Optional<DisplayInfo> optional = advancement.advancement().display();
+  public void addAdvancement(final Advancement advancement) {
+    final Optional<DisplayInfo> optional = Optional.ofNullable(advancement.getDisplay());
     if (!optional.isEmpty()) {
       final AdvancementReloadedWidget advancementWidget = new AdvancementReloadedWidget(this, this.client, advancement,
           ReloadedDisplayInfo.cast(optional.get()));
-      this.addWidget(advancementWidget, advancement.holder());
+      this.addWidget(advancementWidget, advancement);
     }
   }
 
@@ -514,7 +511,7 @@ public class AdvancementReloadedTab {
    * @param widget      the widget to add
    * @param advancement the holder of the widget
    */
-  private void addWidget(final AdvancementReloadedWidget widget, final AdvancementHolder advancement) {
+  private void addWidget(final AdvancementReloadedWidget widget, final Advancement advancement) {
     this.widgets.put(advancement, widget);
     final int i = widget.getX();
     final int j = i + 28;
@@ -542,7 +539,7 @@ public class AdvancementReloadedTab {
    *         widget exists
    */
   @Nullable
-  public AdvancementReloadedWidget getWidget(final AdvancementHolder advancement) {
+  public AdvancementReloadedWidget getWidget(final Advancement advancement) {
     return this.widgets.get(advancement);
   }
 

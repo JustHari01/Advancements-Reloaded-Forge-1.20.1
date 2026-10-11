@@ -1,7 +1,7 @@
 package codes.atomys.advr;
 
 import java.util.Optional;
-import net.minecraft.advancements.AdvancementType;
+import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +35,7 @@ public class ReloadedDisplayInfo extends DisplayInfo {
    * @param hidden       A boolean indicating whether the advancement is hidden.
    */
   public ReloadedDisplayInfo(final ItemStack icon, final Component title, final Component description,
-      final Optional<ResourceLocation> background, final AdvancementType type, final boolean showToast,
+      final ResourceLocation background, final FrameType type, final boolean showToast,
       final boolean announceChat,
       final boolean hidden) {
     super(icon, title, description, background, type, showToast, announceChat, hidden);
@@ -51,7 +51,7 @@ public class ReloadedDisplayInfo extends DisplayInfo {
    */
   public static ReloadedDisplayInfo cast(final DisplayInfo display) {
     final ReloadedDisplayInfo ard = new ReloadedDisplayInfo(display.getIcon(), display.getTitle(),
-        display.getDescription(), display.getBackground(), display.getType(), display.shouldShowToast(),
+        display.getDescription(), display.getBackground(), display.getFrame(), display.shouldShowToast(),
         display.shouldAnnounceChat(), display.isHidden());
     ard.x = display.getX();
     ard.y = display.getY();

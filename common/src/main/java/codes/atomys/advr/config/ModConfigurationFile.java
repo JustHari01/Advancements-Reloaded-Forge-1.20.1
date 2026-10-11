@@ -86,7 +86,7 @@ public final class ModConfigurationFile {
 
     config.load();
     final Config appearance = config.getOrElse("appearance", () -> null);
-    final Config advancedCustomization = config.getOrElse("advanced_customization", () -> null);
+    final Config advancedCustomization = config.getOrElse("advanced_customization", Config::inMemory);
 
     if (appearance == null) {
       config.close();

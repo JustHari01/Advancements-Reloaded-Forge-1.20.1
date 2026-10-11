@@ -1,36 +1,36 @@
 modLoader = "javafml"
-loaderVersion = "*"
+loaderVersion = "[47,)"
 license = "MIT"
-displayURL = "https://github.com/42atomys/mc-advancements-reloaded"
-issueTrackerURL="https://github.com/42atomys/mc-advancements-reloaded/issues"
+displayURL = "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1"
 
 [[mods]]
 modId = "advancements_reloaded"
 version = "${version}"
-displayName = "Advancements Reloaded"
-updateJSONURL="https://api.modrinth.com/updates/advancements-reloaded/forge_updates.json"
-displayURL="https://modrinth.com/mod/advancements-reloaded"
+displayName = "Advancements Reloaded (UNOFFICIAL)"
+displayURL="https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1"
 logoFile="icon.png"
-authors = "@42atomys"
+authors = "42atomys, gbl; unofficial backport by Hari"
 description = '''
-Make it easier to see which advancements you have and what's missing.
+AI-assisted unofficial Forge 1.20.1 backport of Advancements Reloaded v0.6.1.
+Full-screen advancement tree, criteria sidebar, sorting and configuration.
+Original mod by 42atomys, following AdvancementInfo by gbl. MIT licensed.
 '''
 
 [[dependencies.advancements_reloaded]]
 modId = "forge"
 mandatory = true
-versionRange = "[48,)"
+versionRange = "[47,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.advancements_reloaded]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.21,)"
+versionRange = "[1.20.1,1.20.2)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.advancements_reloaded]]
 modId = "cloth_config"
-versionRange = "[15.0.0,)"
+versionRange = "[11.1.136,12)"
 mandatory = true

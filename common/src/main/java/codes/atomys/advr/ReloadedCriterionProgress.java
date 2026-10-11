@@ -6,11 +6,10 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.CommonColors;
+import codes.atomys.advr.compat.LegacyColors;
 
 /**
  * Represents the progress of a specific criterion within an advancement.
@@ -19,9 +18,10 @@ import net.minecraft.util.CommonColors;
  * and to get the title and color of the criterion progress.
  */
 public class ReloadedCriterionProgress {
-  private final AdvancementNode advancementNode;
+  private final Advancement advancementNode;
   private final AdvancementProgress progress;
   private final ResourceLocation criterion;
+  private final String criterionName;
 
   private boolean obtained;
 
@@ -33,11 +33,12 @@ public class ReloadedCriterionProgress {
    * @param progress        The overall progress of the advancement.
    * @param criterionName   The name of the criterion being tracked.
    */
-  public ReloadedCriterionProgress(final AdvancementNode advancementNode, final AdvancementProgress progress,
+  public ReloadedCriterionProgress(final Advancement advancementNode, final AdvancementProgress progress,
       final String criterionName) {
     this.advancementNode = advancementNode;
     this.progress = progress;
-    this.criterion = ResourceLocation.parse(criterionName);
+    this.criterionName = criterionName;
+    this.criterion = ResourceLocation.tryParse(criterionName);
 
     this.obtained = progress.getCriterion(criterionName).isDone();
   }
@@ -47,7 +48,7 @@ public class ReloadedCriterionProgress {
    *
    * @return the advancement node this criterion belongs to
    */
-  public AdvancementNode getAdvancementNode() {
+  public Advancement getAdvancementNode() {
     return this.advancementNode;
   }
 
@@ -57,7 +58,7 @@ public class ReloadedCriterionProgress {
    * @return the advancement this criterion belongs to
    */
   public Advancement getAdvancement() {
-    return this.advancementNode.holder().value();
+    return this.advancementNode;
   }
 
   /**
@@ -66,7 +67,7 @@ public class ReloadedCriterionProgress {
    * @return the resource location of the advancement this criterion belongs to
    */
   public ResourceLocation getResourceLocation() {
-    return this.advancementNode.holder().id();
+    return this.advancementNode.getId();
   }
 
   /**
@@ -85,7 +86,7 @@ public class ReloadedCriterionProgress {
    * @return the title of this criterion progress
    */
   public Component getTitle() {
-    return Component.nullToEmpty(this.criterion.toString());
+    return Component.literal(this.criterionName);
   }
 
   /**
@@ -95,7 +96,7 @@ public class ReloadedCriterionProgress {
    * @return the color of this criterion progress
    */
   public int getColor() {
-    return this.isObtained() ? CommonColors.GREEN : CommonColors.RED;
+    return this.isObtained() ? LegacyColors.GREEN : LegacyColors.RED;
   }
 
   /**
@@ -121,7 +122,7 @@ public class ReloadedCriterionProgress {
         break;
       case ONLY_COMPATIBLE:
         // Only translate when compatible with mod
-        return Component.translatableWithFallback(translationKey, this.criterion.getPath());
+        return Component.translatableWithFallback(translationKey, this.criterionPath());
       case TRY_TO_TRANSLATE:
         // Try to translate all the time (try to translate as possible) but
         // can be a performance hit
@@ -130,7 +131,7 @@ public class ReloadedCriterionProgress {
         break;
     }
 
-    return Component.literal(this.criterion.getPath());
+    return Component.literal(this.criterionPath());
   }
 
   /**
@@ -145,7 +146,7 @@ public class ReloadedCriterionProgress {
    * @return the translation key for the criterion name
    */
   public String getTranslationKey() {
-    final String criterionName = this.criterion.getPath();
+    final String criterionName = this.criterionPath();
 
     final List<String> parts = List.of(
         "advancements",
@@ -189,7 +190,7 @@ public class ReloadedCriterionProgress {
    * @return the category of the advancement
    */
   private String getAdvancementCategory() {
-    final ResourceLocation locationId = this.getAdvancementNode().root().holder().id();
+    final ResourceLocation locationId = this.getAdvancementNode().getRoot().getId();
     final String path = locationId.getPath();
 
     if (!path.contains("/")) {
@@ -205,6 +206,9 @@ public class ReloadedCriterionProgress {
   }
 
   private Component retrieveTranslationOnGame() {
+    if (this.criterion == null) {
+      return Component.literal(this.criterionName);
+    }
     final String criterionNamespace = this.criterion.getNamespace();
     final String criteria = this.criterion.getPath();
 
@@ -237,5 +241,9 @@ public class ReloadedCriterionProgress {
         "Unable to translate {} to a more meaningful name, adding as is, performance may be degraded. You can add your own translation for this criterion by adding the translation key: `{}`.",
         criteria, this.getTranslationKey());
     return Component.literal(criteria);
+  }
+
+  private String criterionPath() {
+    return this.criterion == null ? this.criterionName : this.criterion.getPath();
   }
 }

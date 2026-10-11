@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.Minecraft;
@@ -40,19 +39,18 @@ import org.jetbrains.annotations.Nullable;
  * </p>
  *
  * @see AdvancementReloadedTab
- * @see AdvancementNode
+ * @see Advancement
  * @see DisplayInfo
  */
 public class AdvancementReloadedWidget {
-  private static final ResourceLocation TITLE_BOX_TEXTURE = ResourceLocation
-      .withDefaultNamespace("advancements/title_box");
+  private static final ResourceLocation TITLE_BOX_TEXTURE = new ResourceLocation("textures/gui/advancements/widgets.png");
 
   // CHECKSTYLE:OFF
   private static final int[] SPLIT_OFFSET_CANDIDATES = new int[] { 0, 10, -10, 25, -25 };
   // CHECKSTYLE:ON
 
   private final AdvancementReloadedTab tab;
-  private final AdvancementNode advancement;
+  private final Advancement advancement;
   private final DisplayInfo display;
   private final FormattedCharSequence title;
   private final int width;
@@ -69,7 +67,7 @@ public class AdvancementReloadedWidget {
 
   /**
    * The constructor for the AdvancementReloadedWidget class.
-   * It takes an AdvancementReloadedTab, a Minecraft client, an AdvancementNode,
+   * It takes an AdvancementReloadedTab, a Minecraft client, an Advancement,
    * and a DisplayInfo as parameters, and initializes the widget with the given
    * data.
    * <p>
@@ -87,7 +85,7 @@ public class AdvancementReloadedWidget {
    * @param display     the display information for the advancement
    */
   public AdvancementReloadedWidget(final AdvancementReloadedTab tab, final Minecraft client,
-      final AdvancementNode advancement,
+      final Advancement advancement,
       final DisplayInfo display) {
     this.tab = tab;
     this.advancement = advancement;
@@ -100,7 +98,7 @@ public class AdvancementReloadedWidget {
     int j = 29 + client.font.width(this.title) + i;
     this.description = Language.getInstance()
         .getVisualOrder(this.wrapDescription(ComponentUtils.mergeStyles(display.getDescription().copy(),
-            Style.EMPTY.withColor(display.getType().getChatColor())), j));
+            Style.EMPTY.withColor(display.getFrame().getChatColor())), j));
 
     for (final FormattedCharSequence orderedText : this.description) {
       j = Math.max(j, client.font.width(orderedText));
@@ -123,7 +121,7 @@ public class AdvancementReloadedWidget {
    * @return the width of the progress bar
    */
   private int getProgressWidth() {
-    final int i = this.advancement.advancement().requirements().size();
+    final int i = this.advancement.getRequirements().length;
     if (i <= 1)
       return 0;
     final int j = 8;
@@ -205,13 +203,13 @@ public class AdvancementReloadedWidget {
    *         parent exists
    */
   @Nullable
-  private AdvancementReloadedWidget getParent(AdvancementNode advancement) {
+  private AdvancementReloadedWidget getParent(Advancement advancement) {
     do {
-      advancement = advancement.parent();
-    } while (advancement != null && advancement.advancement().display().isEmpty());
+      advancement = advancement.getParent();
+    } while (advancement != null && advancement.getDisplay() == null);
 
-    if (advancement != null && !advancement.advancement().display().isEmpty()) {
-      return this.tab.getWidget(advancement.holder());
+    if (advancement != null && advancement.getDisplay() != null) {
+      return this.tab.getWidget(advancement);
     } else {
       return null;
     }
@@ -223,7 +221,7 @@ public class AdvancementReloadedWidget {
    * @return the advancement this widget belongs to
    */
   public Advancement getAdvancement() {
-    return this.advancement.advancement();
+    return this.advancement;
   }
 
   /**
@@ -300,8 +298,8 @@ public class AdvancementReloadedWidget {
       } else {
         advancementObtainedStatus = AdvancementWidgetType.UNOBTAINED;
       }
-      context.blitSprite(advancementObtainedStatus.frameSprite(this.display.getType()), x + this.x + 3,
-          y + this.y, 26, 26);
+      context.blit(TITLE_BOX_TEXTURE, x + this.x + 3,
+          y + this.y, this.display.getFrame().getTexture(), 128 + advancementObtainedStatus.getIndex() * 26, 26, 26);
       context.renderFakeItem(this.display.getIcon(), x + this.x + 8, y + this.y + 5);
     }
     for (final AdvancementReloadedWidget advancementWidget : this.children)
@@ -407,7 +405,8 @@ public class AdvancementReloadedWidget {
     final AdvancementWidgetType advancementObtainedStatus3;
     final int m;
     final boolean bl = (x + originX + this.x + this.width + 26 >= (this.tab.getScreen()).width);
-    final Component text = (this.progress == null) ? null : this.progress.getProgressText();
+    final String progressText = (this.progress == null) ? null : this.progress.getProgressText();
+    final Component text = progressText == null ? null : Component.literal(progressText);
     final int i = (text == null) ? 0 : this.client.font.width(text);
     Objects.requireNonNull(this.client.font);
     final boolean bl2 = (113 - originY - this.y - 26 <= 6 + this.description.size() * 9);
@@ -445,14 +444,14 @@ public class AdvancementReloadedWidget {
     final int n = 32 + this.description.size() * 9;
     if (!this.description.isEmpty())
       if (bl2) {
-        context.blitSprite(TITLE_BOX_TEXTURE, m, l + 26 - n, this.width, n);
+        context.blitNineSliced(TITLE_BOX_TEXTURE, m, l + 26 - n, this.width, n, 10, 200, 26, 0, 52);
       } else {
-        context.blitSprite(TITLE_BOX_TEXTURE, m, l, this.width, n);
+        context.blitNineSliced(TITLE_BOX_TEXTURE, m, l, this.width, n, 10, 200, 26, 0, 52);
       }
-    context.blitSprite(advancementObtainedStatus.boxSprite(), 200, 26, 0, 0, m, l, j, 26);
-    context.blitSprite(advancementObtainedStatus2.boxSprite(), 200, 26, 200 - k, 0, m + j, l, k, 26);
-    context.blitSprite(advancementObtainedStatus3.frameSprite(this.display.getType()), originX + this.x + 3,
-        originY + this.y, 26, 26);
+    context.blit(TITLE_BOX_TEXTURE, m, l, 0, advancementObtainedStatus.getIndex() * 26, j, 26);
+    context.blit(TITLE_BOX_TEXTURE, m + j, l, 200 - k, advancementObtainedStatus2.getIndex() * 26, k, 26);
+    context.blit(TITLE_BOX_TEXTURE, originX + this.x + 3,
+        originY + this.y, this.display.getFrame().getTexture(), 128 + advancementObtainedStatus3.getIndex() * 26, 26, 26);
     if (bl) {
       context.drawString(this.client.font, this.title, m + 5, originY + this.y + 9, -1);
       if (text != null)
@@ -528,7 +527,7 @@ public class AdvancementReloadedWidget {
    * </p>
    */
   public void addToTree() {
-    if (this.parent == null && this.advancement.parent() != null) {
+    if (this.parent == null && this.advancement.getParent() != null) {
       this.parent = this.getParent(this.advancement);
       if (this.parent != null) {
         this.parent.addChild(this);

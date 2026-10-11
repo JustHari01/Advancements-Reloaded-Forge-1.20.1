@@ -14,8 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,7 +25,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSeenAdvancementsPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.CommonColors;
+import codes.atomys.advr.compat.LegacyColors;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,19 +52,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AdvancementReloadedScreen extends Screen implements ClientAdvancements.Listener {
 
-  private static final ResourceLocation criteriasSeparator = ResourceLocation
-      .parse("advancements_reloaded:textures/gui/inworld_right_separator.png");
-  private static final ResourceLocation SCROLLER_TEXTURE = ResourceLocation.withDefaultNamespace("widget/scroller");
-  private static final ResourceLocation SCROLLER_BACKGROUND_TEXTURE = ResourceLocation
-      .withDefaultNamespace("widget/scroller_background");
+  private static final ResourceLocation criteriasSeparator = new ResourceLocation("advancements_reloaded:textures/gui/inworld_right_separator.png");
+  private static final ResourceLocation SCROLLER_TEXTURE = new ResourceLocation("widget/scroller");
+  private static final ResourceLocation SCROLLER_BACKGROUND_TEXTURE = new ResourceLocation("widget/scroller_background");
 
   private static final Component SAD_LABEL_TEXT = Component.translatable("advancements.sad_label");
   private static final Component EMPTY_TEXT = Component.translatable("advancements.empty");
   @Nullable
   private final Screen parent;
   private final ClientAdvancements advancementHandler;
-  private Map<AdvancementHolder, AdvancementReloadedTab> tabs = Maps
-      .<AdvancementHolder, AdvancementReloadedTab>newLinkedHashMap();
+  private Map<Advancement, AdvancementReloadedTab> tabs = Maps
+      .<Advancement, AdvancementReloadedTab>newLinkedHashMap();
   @Nullable
   private Optional<AdvancementReloadedTab> selectedTab;
   private AdvancementReloadedWidget selectedWidget;
@@ -106,14 +103,20 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
   @Override
   protected void init() {
     this.tabs.clear();
-    this.selectedTab = null;
-    this.selectedWidget = Memory.getWidget();
+    this.selectedTab = Optional.empty();
+    final AdvancementReloadedWidget rememberedWidget = Memory.getWidget();
+    this.selectedWidget = null;
     this.advancementHandler.setListener(this);
+    if (rememberedWidget != null) {
+      final Advancement remembered = this.advancementHandler.getAdvancements()
+          .get(rememberedWidget.getAdvancement().getId());
+      this.setSelectedWidget(remembered == null ? null : this.getAdvancementWidget(remembered));
+    }
     if (this.selectedTab.isEmpty() && !this.tabs.isEmpty()) {
       final AdvancementReloadedTab advancementTab = this.tabs.values().iterator().next();
-      this.advancementHandler.setSelectedTab(advancementTab.getRoot().holder(), true);
+      this.advancementHandler.setSelectedTab(advancementTab.getRoot(), true);
     } else {
-      this.selectedTab.ifPresent(tab -> this.advancementHandler.setSelectedTab(tab.getRoot().holder(), true));
+      this.selectedTab.ifPresent(tab -> this.advancementHandler.setSelectedTab(tab.getRoot(), true));
     }
 
     this.setClickableRegions();
@@ -224,7 +227,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
         }
 
         if (advancementTab.isClickOnTab(i, j, mouseX, mouseY)) {
-          this.advancementHandler.setSelectedTab(advancementTab.getRoot().holder(), true);
+          this.advancementHandler.setSelectedTab(advancementTab.getRoot(), true);
           break;
         }
       }
@@ -377,13 +380,12 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @return true to propagate the event, false to cancel it
    */
   @Override
-  public boolean mouseScrolled(final double mouseX, final double mouseY, final double horizontalAmount,
-      final double verticalAmount) {
+  public boolean mouseScrolled(final double mouseX, final double mouseY, final double verticalAmount) {
     ClickableRegion.foundRegions(this.clickableRegions, mouseX, mouseY).forEach(region -> {
       switch (region.getName()) {
         case "advancement_tree":
           if (this.selectedTab.isPresent())
-            this.selectedTab.get().move(horizontalAmount * 16.0, verticalAmount * 16.0);
+            this.selectedTab.get().move((Screen.hasShiftDown() ? verticalAmount : 0.0) * 16.0, (Screen.hasShiftDown() ? 0.0 : verticalAmount) * 16.0);
           break;
         case "advancement_criterias", "advancement_criterias_scrollbar":
           this.setScrollOffset(this.scrollOffset - (int) verticalAmount * 16);
@@ -452,7 +454,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
   @Override
   public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
     // ! FIXME: Transparent background is broken on Forge
-    renderBackground(context, mouseX, mouseY, delta);
+    renderBackground(context);
     super.render(context, mouseX, mouseY, delta);
 
     final int i = 0;
@@ -496,28 +498,25 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
       final int y) {
 
     switch (Configuration.backgroundStyle) {
-      case Configuration.BackgroundStyle.TRANSPARENT:
+      case TRANSPARENT:
         break;
-      case Configuration.BackgroundStyle.BLACK:
-        context.fill(0, 0, width, height, CommonColors.BLACK);
+      case BLACK:
+        context.fill(0, 0, width, height, LegacyColors.BLACK);
         break;
-      case Configuration.BackgroundStyle.ACHIEVEMENT:
+      case ACHIEVEMENT:
         this.selectedTab.ifPresent(tab -> {
-          final ResourceLocation textureResourceLocation = tab.getDisplay().getBackground()
-              .orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+          final ResourceLocation textureResourceLocation = Optional.ofNullable(tab.getDisplay().getBackground()).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
           context.blit(textureResourceLocation, 0, 0, 0.0F, 0.0F, width, height, 16, 16);
         });
         context.fill(0, 0, width, height, -200, Mth.floor(0.7 * 255.0F) << 24);
-        context.pose().pushPose();
-        context.pose().translate(0.0F, 0.0F, 300.0F);
         break;
     }
 
     if (this.selectedTab.isEmpty()) {
       context.drawCenteredString(this.font, EMPTY_TEXT, width / 2,
-          (height / 2) - this.font.lineHeight * 2, CommonColors.WHITE);
+          (height / 2) - this.font.lineHeight * 2, LegacyColors.WHITE);
       context.drawCenteredString(this.font, SAD_LABEL_TEXT, width / 2,
-          (height / 2) + this.font.lineHeight * 2, CommonColors.WHITE);
+          (height / 2) + this.font.lineHeight * 2, LegacyColors.WHITE);
     } else {
       this.selectedTab.get().render(context, x, y);
     }
@@ -553,8 +552,8 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
     // 6 are the scrollbar width and 12 (6[left]-6[right]) are the right margin
     final int maxTextWidth = Configuration.criteriasWidth - (this.needScrollbarOnCriterias() ? 6 : 0) - 12;
 
-    final Component title = this.getSelectedWidget().getAdvancement().name().get();
-    final Component description = this.getSelectedWidget().getAdvancement().display().get().getDescription();
+    final Component title = this.getSelectedWidget().getAdvancement().getDisplay().getTitle();
+    final Component description = this.getSelectedWidget().getAdvancement().getDisplay().getDescription();
 
     context.fill(width - Configuration.criteriasWidth, Configuration.headerHeight, width,
         height - Configuration.footerHeight, Mth.floor(0.5F * 255.0F) << 24);
@@ -572,7 +571,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
     this.contentHeight = 6; // 6 are the bottom margin
 
     // Drawing title
-    context.drawWordWrap(this.font, title, sidebarXOffset, paddingTop, maxTextWidth, CommonColors.WHITE);
+    context.drawWordWrap(this.font, title, sidebarXOffset, paddingTop, maxTextWidth, LegacyColors.WHITE);
     // 4 are the padding bottom added
     paddingTop += (this.font.lineHeight) * this.font.split(title, maxTextWidth).size() + 4;
     this.contentHeight += (this.font.lineHeight) * this.font.split(title, maxTextWidth).size() + 4;
@@ -580,13 +579,13 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
     // Drawing description
     if (Configuration.displayDescription && description != null) {
       context.drawWordWrap(this.font, description, sidebarXOffset, paddingTop, maxTextWidth,
-          this.getSelectedWidget().getAdvancement().display().get().getType().getChatColor().getColor());
+          this.getSelectedWidget().getAdvancement().getDisplay().getFrame().getChatColor().getColor());
       // 4 are the padding bottom added
       paddingTop += (this.font.lineHeight) * this.font.split(description, maxTextWidth).size() + 4;
       this.contentHeight += (this.font.lineHeight) * this.font.split(description, maxTextWidth).size() + 4;
     }
 
-    context.hLine(sidebarXOffset, width - 12, paddingTop, CommonColors.LIGHT_GRAY);
+    context.hLine(sidebarXOffset, width - 12, paddingTop, LegacyColors.LIGHT_GRAY);
     paddingTop += 5;
     this.contentHeight += 5;
 
@@ -626,8 +625,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
 
     // Drawing scrollbar background
     RenderSystem.enableBlend();
-    context.blitSprite(SCROLLER_BACKGROUND_TEXTURE, width - 6, Configuration.headerHeight,
-        6, drawingHeight);
+    context.fill(width - 6, Configuration.headerHeight, width, Configuration.headerHeight + drawingHeight, 0x80000000);
 
     // Drawing the scrollbar
     final int scrollBarHeight = (int) (drawingHeight * drawingHeight / (double) this.contentHeight);
@@ -636,7 +634,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
             * (this.scrollOffset / (double) (this.contentHeight - (drawingHeight))));
 
     // draw the scrollbar
-    context.blitSprite(SCROLLER_TEXTURE, width - 6, scrollBarY, 6, scrollBarHeight);
+    context.fill(width - 6, scrollBarY, width, scrollBarY + scrollBarHeight, 0xffaaaaaa);
     RenderSystem.disableBlend();
 
   }
@@ -686,8 +684,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
 
     if (this.selectedTab.isPresent()) {
       final DisplayInfo display = this.selectedTab.get().getDisplay();
-      final ResourceLocation textureResourceLocation = display.getBackground()
-          .orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+      final ResourceLocation textureResourceLocation = Optional.ofNullable(display.getBackground()).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
 
       // Draw header
       final int headerDrawHeight = Configuration.headerHeight / 16 + 1;
@@ -768,16 +765,12 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
     // Bind and draw header texture
-    RenderSystem.setShaderTexture(0, Screen.INWORLD_HEADER_SEPARATOR);
-    context.blit(Screen.INWORLD_HEADER_SEPARATOR, 0,
-        Configuration.headerHeight - 1, 0.0F, 0.0F,
-        width, 2, 32, 2);
+    RenderSystem.setShaderTexture(0, criteriasSeparator);
+    context.fill(0, Configuration.headerHeight - 1, width, Configuration.headerHeight + 1, 0xff808080);
 
     // Bind and draw footer texture
-    RenderSystem.setShaderTexture(0, Screen.INWORLD_FOOTER_SEPARATOR);
-    context.blit(Screen.INWORLD_FOOTER_SEPARATOR, 0,
-        height - Configuration.footerHeight - 1, 0.0F,
-        0.0F, width, 2, 32, 2);
+    RenderSystem.setShaderTexture(0, criteriasSeparator);
+    context.fill(0, height - Configuration.footerHeight - 1, width, height - Configuration.footerHeight + 1, 0xff808080);
 
     // Reset shader color to avoid affecting subsequent draws
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -826,7 +819,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
     if (Configuration.tabsAlphabeticOrder) {
       final List<AdvancementReloadedTab> sortedTabs = new ArrayList<>(this.tabs.values());
       sortedTabs.sort(Comparator.comparing(
-          tab -> tab.getRoot().advancement().name().orElse(Component.literal(tab.getRoot().toString())).getString()));
+          tab -> tab.getTitle().getString()));
 
       this.tabs.clear();
       for (int index = 0; index < sortedTabs.size(); index++) {
@@ -836,7 +829,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
         // This is used to identify the tab in the tab list and to determine
         // the correct position on UI.
         tab.setIndex(index);
-        this.tabs.put(tab.getRoot().holder(), tab);
+        this.tabs.put(tab.getRoot(), tab);
       }
     }
   }
@@ -847,11 +840,11 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *
    * @param root the root advancement node to add
    */
-  public void onRootAdded(final AdvancementNode root) {
+  public void onRootAdded(final Advancement root) {
     final AdvancementReloadedTab advancementTab = AdvancementReloadedTab.create(this.minecraft, this, this.tabs.size(),
         root);
     if (advancementTab != null) {
-      this.tabs.put(root.holder(), advancementTab);
+      this.tabs.put(root, advancementTab);
       this.sortTabsAlphabetically();
     }
   }
@@ -861,7 +854,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *
    * @param root the removed root advancement node
    */
-  public void onRootRemoved(final AdvancementNode root) {
+  public void onRootRemoved(final Advancement root) {
   }
 
   /**
@@ -870,7 +863,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *
    * @param dependent the dependent to add
    */
-  public void onDependentAdded(final AdvancementNode dependent) {
+  public void onDependentAdded(final Advancement dependent) {
     final AdvancementReloadedTab advancementTab = this.getTab(dependent);
     if (advancementTab != null) {
       advancementTab.addAdvancement(dependent);
@@ -883,7 +876,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *
    * @param dependent the dependent to remove
    */
-  public void onDependentRemoved(final AdvancementNode dependent) {
+  public void onDependentRemoved(final Advancement dependent) {
   }
 
   /**
@@ -897,7 +890,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param progress    the new progress
    */
   @Override
-  public void onUpdateAdvancementProgress(final AdvancementNode advancement, final AdvancementProgress progress) {
+  public void onUpdateAdvancementProgress(final Advancement advancement, final AdvancementProgress progress) {
     final AdvancementReloadedWidget advancementWidget = this.getAdvancementWidget(advancement);
     if (advancementWidget != null) {
       advancementWidget.setProgress(progress);
@@ -912,7 +905,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param advancement the selected tab, or null if no tab is selected
    */
   @Override
-  public void onSelectedTabChanged(@Nullable final AdvancementHolder advancement) {
+  public void onSelectedTabChanged(@Nullable final Advancement advancement) {
     this.setSelectedTab(this.tabs.get(advancement));
   }
 
@@ -984,7 +977,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    */
   public void onClear() {
     this.tabs.clear();
-    this.selectedTab = null;
+    this.selectedTab = Optional.empty();
   }
 
   /**
@@ -996,9 +989,9 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *         widget exists
    */
   @Nullable
-  public AdvancementReloadedWidget getAdvancementWidget(final AdvancementNode advancement) {
+  public AdvancementReloadedWidget getAdvancementWidget(final Advancement advancement) {
     final AdvancementReloadedTab advancementTab = this.getTab(advancement);
-    return advancementTab == null ? null : advancementTab.getWidget(advancement.holder());
+    return advancementTab == null ? null : advancementTab.getWidget(advancement);
   }
 
   /**
@@ -1010,9 +1003,9 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    *         tab exists
    */
   @Nullable
-  private AdvancementReloadedTab getTab(final AdvancementNode advancement) {
-    final AdvancementNode placedAdvancement = advancement.root();
-    return this.tabs.get(placedAdvancement.holder());
+  private AdvancementReloadedTab getTab(final Advancement advancement) {
+    final Advancement placedAdvancement = advancement.getRoot();
+    return this.tabs.get(placedAdvancement);
   }
 
   /**
@@ -1022,11 +1015,11 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param advancement the root advancement node to add
    */
   @Override
-  public void onAddAdvancementRoot(final AdvancementNode advancement) {
+  public void onAddAdvancementRoot(final Advancement advancement) {
     final AdvancementReloadedTab advancementTab = AdvancementReloadedTab.create(this.minecraft, this, this.tabs.size(),
         advancement);
     if (advancementTab != null) {
-      this.tabs.put(advancement.holder(), advancementTab);
+      this.tabs.put(advancement, advancementTab);
       this.sortTabsAlphabetically();
     }
   }
@@ -1038,7 +1031,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param advancement the root advancement node to remove
    */
   @Override
-  public void onRemoveAdvancementRoot(final AdvancementNode advancement) {
+  public void onRemoveAdvancementRoot(final Advancement advancement) {
   }
 
   /**
@@ -1048,7 +1041,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param advancement the advancement to add
    */
   @Override
-  public void onAddAdvancementTask(final AdvancementNode advancement) {
+  public void onAddAdvancementTask(final Advancement advancement) {
     final AdvancementReloadedTab advancementTab = this.getTab(advancement);
     if (advancementTab != null) {
       advancementTab.addAdvancement(advancement);
@@ -1062,7 +1055,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    * @param advancement the advancement to remove
    */
   @Override
-  public void onRemoveAdvancementTask(final AdvancementNode advancement) {
+  public void onRemoveAdvancementTask(final Advancement advancement) {
   }
 
   /**
@@ -1071,7 +1064,7 @@ public class AdvancementReloadedScreen extends Screen implements ClientAdvanceme
    */
   @Override
   public void onAdvancementsCleared() {
-    this.tabs.clear();
-    this.selectedTab = null;
+    this.onClear();
+    this.setSelectedWidget(null);
   }
 }
