@@ -48,3 +48,4 @@ run-client/
 run-server/
 *.log
 release/
+tools/publish-beta.ps1
