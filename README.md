@@ -36,4 +36,3 @@ With JDK 17, run `./gradlew build` (`gradlew.bat build` on Windows). Release fil
 For the fixture UI check, run `./gradlew runClient -Pqa=true`. The QA harness exists only in that explicitly requested QA build and shuts down after printing `[ADVR-QA] PASS` or `FAIL`. Screenshots are written in `run-client/screenshots`. **Run `./gradlew clean build` without `-Pqa` afterwards** to produce a release without the harness.
 
 The root Gradle project builds only Forge 1.20.1. Historical Fabric/NeoForge directories are retained for upstream provenance and are not release targets of this fork. The scripts in `tools` record the one-time migration; they are not required to build and should not be rerun on the finished tree.
-

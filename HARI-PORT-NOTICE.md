@@ -16,4 +16,3 @@ Minecraft 1.20.1 GUI rendering and input, and backport-specific fixes.
 The backport implementation and publishing text were produced with Codex AI.
 This notice applies only to the backport; it does not
 attribute AI use to the upstream authors.
-

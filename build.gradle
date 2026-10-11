@@ -65,4 +65,3 @@ sourcesJar {
     from('LICENSE')
     from('HARI-PORT-NOTICE.md')
 }
-
