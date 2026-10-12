@@ -1,0 +1,7 @@
+[versions]
+
+loom = "1.11-SNAPSHOT"
+
+[plugins]
+
+loom = { id = "dev.architectury.loom", version.ref = "loom" }

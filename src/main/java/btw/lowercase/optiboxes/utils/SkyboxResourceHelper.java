@@ -1,0 +1,56 @@
+package btw.lowercase.optiboxes.utils;
+
+import btw.lowercase.optiboxes.OptiBoxesClient;
+import btw.lowercase.optiboxes.skybox.SkyboxManager;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.Stream;
+
+public class SkyboxResourceHelper implements IdentifiableResourceReloadListener {
+    private ResourceManager resourceManager;
+
+    @Override
+    public @NotNull CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier preparationBarrier,
+                                                   ResourceManager resourceManager,
+                                                   ProfilerFiller preparationProfiler,
+                                                   ProfilerFiller applyProfiler,
+                                                   Executor backgroundExecutor,
+                                                   Executor gameExecutor) {
+        this.resourceManager = resourceManager;
+        return CompletableFuture.runAsync(() -> {
+            SkyboxManager.INSTANCE.clearSkyboxes();
+            if (OptiBoxesClient.getConfig().enabled.isEnabled()) {
+                OptiBoxesClient.LOGGER.info("Looking for OptiFine/MCPatcher Skies...");
+                OptiBoxesClient.convert(this);
+            }
+        }, backgroundExecutor).thenCompose(preparationBarrier::wait);
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(OptiBoxesClient.MOD_ID, "skybox_reader");
+    }
+
+    public Stream<ResourceLocation> searchIn(String parent) {
+        return this.resourceManager.listResources(parent, path -> true).keySet().stream();
+    }
+
+    public InputStream getInputStream(ResourceLocation resourceLocation) {
+        try {
+            Resource resource = this.resourceManager.getResource(resourceLocation).orElse(null);
+            return resource == null ? null : resource.open();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+}

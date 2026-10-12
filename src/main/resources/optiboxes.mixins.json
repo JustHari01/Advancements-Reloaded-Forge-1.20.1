@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "btw.lowercase.optiboxes.mixins",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"MixinClientLevel",
+		"MixinLevelRenderer"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
