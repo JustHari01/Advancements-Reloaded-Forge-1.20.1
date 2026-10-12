@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "borderlessmining",
+  "version": "${version}",
+
+  "name": "Borderless Mining (Unofficial)",
+  "description": "AI-assisted unofficial Fabric 1.21.1 port of Borderless Mining by comp500. Adds a windowed borderless fullscreen option.",
+  "authors": [
+    "comp500 (original author)",
+    "JustHari01 (port)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1",
+    "sources": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1",
+    "issues": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1/issues"
+  },
+
+  "license": "MIT",
+  "icon": "assets/borderlessmining/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "modmenu" : [
+      "link.infra.borderlessmining.config.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "borderlessmining.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "borderlessmining.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=0.7.2",
+    "fabric-resource-loader-v0": "*",
+    "minecraft": "~1.21.1"
+  }
+}

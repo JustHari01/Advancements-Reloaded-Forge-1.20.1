@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "link.infra.borderlessmining.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "client": [
+	  "FullScreenOptionMixin",
+	  "WindowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 1
+  }
+}
