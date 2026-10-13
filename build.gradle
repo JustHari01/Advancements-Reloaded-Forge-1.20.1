@@ -1,67 +1,180 @@
 plugins {
-    id 'java'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '1.7.4'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
-group = 'codes.atomys.advr'
-version = '0.6.1-hari.1'
-base.archivesName = 'advancements-reloaded-forge-1.20.1'
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-java.withSourcesJar()
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
+
+configurations {
+    shadowInclude
+}
+
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+configurations {
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+def testParallelism = providers.gradleProperty('testParallelism').getOrElse('4')
+def testRunDir = "run-gametest-${testParallelism}"
+
+loom {
+    createRemapConfigurations(sourceSets.gametest)
+    mods {
+        scalablelux { sourceSet sourceSets.main }
+        scalablelux_gametest { sourceSet sourceSets.gametest }
+    }
     runs {
-        client {
-            workingDirectory project.file('run-client')
-            property 'forge.logging.console.level', 'info'
-            property 'advr.qa', project.findProperty('qa') ?: 'false'
-            mods { advancements_reloaded { source sourceSets.main } }
-        }
-        server {
-            workingDirectory project.file('run-server')
-            args '--nogui'
-            mods { advancements_reloaded { source sourceSets.main } }
+        gameTest {
+            server()
+            source sourceSets.gametest
+            runDir testRunDir
+            vmArg '-Dfabric-api.gametest'
+            vmArg "-Dfabric-api.gametest.report-file=${project.file('build/test-results/gametest-' + testParallelism + '.xml').absolutePath}"
         }
     }
 }
-sourceSets.main {
-    java.srcDirs = ['common/src/main/java', 'forge/src/main/java']
-    resources.srcDirs = ['common/src/main/resources', 'forge/src/main/resources']
-    resources.exclude 'advancements_reloaded.accesswidener'
+
+tasks.register('prepareGameTestConfig') {
+    doLast {
+        def config = file("${testRunDir}/config/scalablelux.properties")
+        config.parentFile.mkdirs()
+        config.text = "parallelism=${testParallelism}\n"
+        file('build/test-results').mkdirs()
+    }
 }
-// Fixture harness is compiled only for an explicitly requested QA run.
-if (project.hasProperty('qa')) {
-    sourceSets.main.java.srcDir 'qa/src/main/java'
+
+tasks.named('runGameTest') { dependsOn 'prepareGameTestConfig' }
+
+loom.runs.all {
+    // https://github.com/SpongePowered/Mixin/wiki/Mixin-Java-System-Properties
+    vmArg("-Dmixin.debug=true")
 }
-repositories {
-    maven { url = 'https://maven.shedaniel.me/' }
-    mavenCentral()
+
+/*
+ * Gets the version name from the latest Git tag
+ */
+// https://stackoverflow.com/questions/28498688/gradle-script-to-autoversion-and-include-the-commit-hash-in-android
+def getGitCommit = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+//        workingDir = ".."
+    }
+    return stdout.toString().trim()
 }
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version + "+fabric." + getGitCommit()
+group = project.maven_group
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
-    implementation fg.deobf('me.shedaniel.cloth:cloth-config-forge:11.1.136')
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    //to change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    //mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    //modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
+    // You may need to force-disable transitiveness on them.
+
+    shadowInclude("com.ishland.flowsched:flowsched") {
+        transitive false
+    }
+    implementation("com.ishland.flowsched:flowsched")
+    gametestImplementation sourceSets.main.output
+    modGametestImplementation 'net.fabricmc.fabric-api:fabric-gametest-api-v1:1.2.12+b3afc78b77'
 }
-mixin {
-    add sourceSets.main, 'advancements_reloaded.refmap.json'
-    config 'advancements_reloaded.mixins.json'
-}
+
 processResources {
-    inputs.property 'version', project.version
-    filesMatching('META-INF/mods.toml') { expand version: project.version }
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version, "minecraft_version": minecraft_version, "loader_version": loader_version, "mod_version": mod_version
+    }
 }
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
     options.release = 17
 }
-jar {
-    from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
-    manifest.attributes('MixinConfigs': 'advancements_reloaded.mixins.json')
-    finalizedBy 'reobfJar'
+
+loom {
+    accessWidenerPath = file("src/main/resources/scalablelux.accesswidener")
 }
-sourcesJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+// if it is present.
+// If you remove this task, sources will not be generated.
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+tasks.withType(Jar).configureEach {
     from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
+    from('FlowSched/LICENSE') {
+        into 'META-INF/licenses'
+        rename { 'FlowSched-MIT.txt' }
+    }
+    from('HARI-PORT-NOTICE.md') { into 'META-INF' }
+}
+
+shadowJar {
+    archiveClassifier = "all-dev"
+    configurations = [ project.configurations.shadowInclude ]
+
+    relocate "com.ishland.flowsched", "ca.spottedleaf.starlight.interndep.flowsched"
+}
+
+remapJar {
+    input = shadowJar.archiveFile
+    archiveFileName = shadowJar.archiveFileName.get().replaceAll("-dev\\.jar\$", ".jar")
+    addNestedDependencies = true
+    dependsOn shadowJar
+}
+
+clean.dependsOn gradle.includedBuild('FlowSched').task(':clean')
+
+// make build reproducible
+tasks.withType(AbstractArchiveTask) {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
 }

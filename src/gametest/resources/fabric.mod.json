@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "scalablelux_gametest",
+  "version": "1.0.0",
+  "name": "ScalableLux backport lighting tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["hari.scalablelux.test.LightingGameTests"]
+  },
+  "depends": {
+    "scalablelux": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

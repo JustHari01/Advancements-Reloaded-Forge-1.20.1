@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "scalablelux",
+  "version": "${version}",
+  "name": "ScalableLux (Unofficial 1.20.1 Backport)",
+  "description": "Unofficial Fabric 1.20.1 backport of ScalableLux's Starlight-based lighting engine and configurable parallel light updates.",
+  "authors": [
+    "Spottedleaf",
+    "ishland"
+  ],
+  "contributors": [
+    "Hari (1.20.1 backport)"
+  ],
+  "contact": {
+    "issues": "https://github.com/JustHari01/ScalableLux-1.20.1-Fabric-Backport/issues",
+    "sources": "https://github.com/JustHari01/ScalableLux-1.20.1-Fabric-Backport"
+  },
+  "provides": [
+    "starlight"
+  ],
+  "breaks": {
+    "phosphor" : "*"
+  },
+  "license": "LGPL-3.0-only",
+  "icon": "assets/scalablelux/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ca.spottedleaf.starlight.common.ScalableLuxEntrypoint"
+    ]
+  },
+  "mixins": [
+    "scalablelux.mixins.json"
+  ],
+  "accessWidener" : "scalablelux.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17",
+    "mixinextras": ">=0.3.5"
+  }
+}
