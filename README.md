@@ -1,6 +1,6 @@
 # Borderless Mining (Unofficial) — Fabric 1.21.1
 
-An unofficial Fabric 1.21.1 port of [Borderless Mining](https://github.com/comp500/BorderlessMining) by comp500. This port is AI-assisted and is not an official release or endorsed by the original author.
+An unofficial Fabric 1.21.1 port of [Borderless Mining](https://github.com/comp500/BorderlessMining) by comp500. It is not an official release or endorsed by the original author.
 
 The port preserves the upstream behavior: borderless fullscreen, the video-settings toggle, optional Mod Menu configuration, monitor selection, custom window dimensions, and the existing translations and icon. Its code and bundled assets remain under the upstream MIT license; see [LICENSE](LICENSE) and [UPSTREAM_README.md](UPSTREAM_README.md) for attribution.
 
@@ -20,5 +20,6 @@ Compilation and launch checks do not establish compatibility with every operatin
 
 - Original project and implementation: comp500, [BorderlessMining](https://github.com/comp500/BorderlessMining)
 - Port maintenance: JustHari01
-- AI assistance: used during the 1.21.1 port
 - License: MIT, preserved from upstream
+
+AI disclosure: AI tools assisted with the 1.21.1 port.
