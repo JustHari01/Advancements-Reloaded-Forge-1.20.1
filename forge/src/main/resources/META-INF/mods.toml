@@ -11,9 +11,10 @@ displayURL="https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1"
 logoFile="icon.png"
 authors = "42atomys, gbl; unofficial backport by Hari"
 description = '''
-AI-assisted unofficial Forge 1.20.1 backport of Advancements Reloaded v0.6.1.
+Unofficial Forge 1.20.1 backport of Advancements Reloaded v0.6.1.
 Full-screen advancement tree, criteria sidebar, sorting and configuration.
 Original mod by 42atomys, following AdvancementInfo by gbl. MIT licensed.
+This backport was prepared with AI assistance.
 '''
 
 [[dependencies.advancements_reloaded]]
