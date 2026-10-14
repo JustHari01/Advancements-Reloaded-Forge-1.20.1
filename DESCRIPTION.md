@@ -1,8 +1,8 @@
 # Advancements Reloaded (UNOFFICIAL)
 
-An **AI-assisted unofficial Forge 1.20.1 backport** of Advancements Reloaded, based on upstream **v0.6.1-1.21.1**. It expands the advancement tree to use the screen, shows completed and missing criteria in a sidebar, sorts tabs and criteria alphabetically, and remembers the selected advancement when reopening the screen.
+An unofficial Forge 1.20.1 backport of Advancements Reloaded, based on upstream **v0.6.1-1.21.1**. It expands the advancement tree to use the screen, shows completed and missing criteria in a sidebar, sorts tabs and criteria alphabetically, and remembers the selected advancement when reopening the screen.
 
-This is a community backport maintained by Hari, not an official release from or endorsed by the original authors. **The backport code and release descriptions were prepared with AI assistance.** This disclosure applies to this port's work, not the upstream authors' work.
+This is a community backport maintained by Hari, not an official release from or endorsed by the original authors.
 
 ## Features
 
@@ -28,3 +28,5 @@ Validation: a Minecraft 1.20.1 / Forge 47.4.20 development client passed fixture
 - This Forge backport's source and support: https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1
 
 **MIT License.** The original copyright/license notice is preserved. The upstream icon and translations remain credited to their authors. Source code and port notices are available in the repository and source attachment. Please report backport issues to this fork.
+
+AI disclosure: the backport code and release description were prepared with AI assistance. This applies to the port, not the upstream authors' work.
