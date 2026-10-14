@@ -4,15 +4,15 @@
   "version": "${version}",
 
   "name": "Borderless Mining (Unofficial)",
-  "description": "AI-assisted unofficial Fabric 1.21.1 port of Borderless Mining by comp500. Adds a windowed borderless fullscreen option.",
+  "description": "Unofficial Fabric 1.21.1 port of Borderless Mining by comp500. Adds a windowed borderless fullscreen option. AI tools assisted with this port.",
   "authors": [
     "comp500 (original author)",
     "JustHari01 (port)"
   ],
   "contact": {
-    "homepage": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1",
-    "sources": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1",
-    "issues": "https://github.com/JustHari01/borderless-mining-fabric-1.21.1/issues"
+    "homepage": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/borderless-mining-1.21.1-fabric",
+    "sources": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/borderless-mining-1.21.1-fabric",
+    "issues": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/issues"
   },
 
   "license": "MIT",
