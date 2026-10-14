@@ -12,8 +12,8 @@
     "Hari (1.20.1 backport)"
   ],
   "contact": {
-    "issues": "https://github.com/JustHari01/ScalableLux-1.20.1-Fabric-Backport/issues",
-    "sources": "https://github.com/JustHari01/ScalableLux-1.20.1-Fabric-Backport"
+    "issues": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/issues",
+    "sources": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/scalablelux-1.20.1-fabric"
   },
   "provides": [
     "starlight"
