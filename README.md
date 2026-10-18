@@ -1,40 +1,23 @@
-# Advancements Reloaded (UNOFFICIAL)
+# Detail Armor Bar Reconstructed — 1.20.1 Fabric Port
 
-An unofficial **Forge 1.20.1 backport** of Advancements Reloaded **v0.6.1-1.21.1**. View the advancement tree across the screen, inspect completed and missing criteria in a sidebar, sort tabs and criteria alphabetically, and configure the layout through Cloth Config.
+An unofficial Minecraft 1.20.1 Fabric port of [Detail Armor Bar Reconstructed](https://modrinth.com/mod/detail-armor-bar-reconstructed), based on its upstream Fabric 1.21.1 source.
 
-This is a community backport maintained by Hari. It is not an official release from, or endorsed by, 42atomys or gbl.
+The port keeps the upstream armor bar, enchantment overlays and per-piece coloring, thorns indicator, armor-trim overlay, durability notifications, configuration screen, resource-pack definitions, and developer API. The original textures and icon are included unchanged.
 
-## Installation
+## Compatibility
 
-- Minecraft Java Edition **1.20.1**, **Forge 47**, and **Java 17**.
-- Install **Cloth Config 11.1.136 or a compatible newer 11.x Forge release**.
-- Put the release JAR in the client's `mods` directory. Servers do not need it.
-- Open Advancements with the usual key (default `L`) or the pause menu. Click an advancement to inspect its criteria; scroll the sidebar or drag the tree. Open the configuration through the Forge Mods screen.
+- Minecraft 1.20.1
+- Fabric Loader 0.16.14 or newer
+- Fabric API 0.92.12+1.20.1
+- Mod Menu 7.2.2 is optional and provides the configuration screen
+- Client-side only
 
-Do not install alongside another build of AdvancementInfo / Advancements Reloaded with the same mod ID. Other advancement-screen replacement mods may conflict.
+## Build
 
-## Scope and limitations
+Run `gradlew build` with Java 21. The compiled mod targets Java 17 bytecode. The distributable JAR is created in `build/libs/`.
 
-This beta ports the 0.6.1 feature set. Advancement search introduced in later upstream versions is not included. The inherited transparent-background limitation on Forge remains. Test a copied profile before adding this beta to a large modpack.
+## Attribution and license
 
-The automated fixture harness launched a real Minecraft 1.20.1 / Forge 47.4.20 client and checked alphabetical tabs, 40 criteria including a name with spaces, partial progress, sidebar scrolling, three backgrounds, GUI scaling, configuration rendering, reopening, server reset and empty state. Six screenshots were visually checked. These tests use synthetic packets and do not certify an installed modpack, multiplayer session or every datapack.
+The original mod was created by RedLime and is maintained by coredex-source. This port is maintained by JustHari01 and is not an official release or endorsed by the upstream maintainers. The original MIT license is included in the JAR as `LICENSE_DetailArmorBarReconstructed`.
 
-## Credits and license
-
-- Original Advancements Reloaded by **42atomys**: https://github.com/42atomys/mc-advancements-reloaded
-- Base tag: **v0.6.1-1.21.1**.
-- Earlier AdvancementInfo by **gbl**: https://github.com/gbl/AdvancementInfo
-- Original release: https://modrinth.com/mod/advancements-reloaded
-- This backport's source and support: https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1
-
-The upstream MIT license and copyright notice are retained in `LICENSE`. See `HARI-PORT-NOTICE.md` for backport attribution. The icon is the upstream MIT-licensed icon. Minecraft GUI textures are referenced from the installed game and are not redistributed here.
-
-## Build and reproduce checks
-
-With JDK 17, run `./gradlew build` (`gradlew.bat build` on Windows). Release files are in `build/libs`.
-
-For the fixture UI check, run `./gradlew runClient -Pqa=true`. The QA harness exists only in that explicitly requested QA build and shuts down after printing `[ADVR-QA] PASS` or `FAIL`. Screenshots are written in `run-client/screenshots`. **Run `./gradlew clean build` without `-Pqa` afterwards** to produce a release without the harness.
-
-The root Gradle project builds only Forge 1.20.1. Historical Fabric/NeoForge directories are retained for upstream provenance and are not release targets of this fork. The scripts in `tools` record the one-time migration; they are not required to build and should not be rerun on the finished tree.
-
-AI disclosure: AI assisted the port code and release documentation. This statement concerns this backport, not the original authors' work.
+Porting work used AI assistance. Original code and assets remain attributed to their respective upstream contributors.

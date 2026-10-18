@@ -1,0 +1,152 @@
+package com.redlimerl.detailab.data;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
+import com.redlimerl.detailab.DetailArmorBar;
+import com.redlimerl.detailab.api.DetailArmorBarAPI;
+import com.redlimerl.detailab.api.render.ArmorBarRenderManager;
+import com.redlimerl.detailab.render.ArmorTrimHandler;
+import com.redlimerl.detailab.api.render.CustomArmorBar;
+import com.redlimerl.detailab.api.render.ItemBarRenderManager;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.profiling.ProfilerFiller;
+
+import java.util.Map;
+import java.util.Optional;
+
+public class ArmorBarLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
+
+    private static final Gson GSON = new GsonBuilder().create();
+
+    private Map<Item, CustomArmorBar> armorList;
+    private Map<Item, CustomArmorBar> itemList;
+
+    public ArmorBarLoader() {
+        super(GSON, "armor_bar");
+    }
+
+    public Map<Item, CustomArmorBar> getArmorList() {
+        return armorList;
+    }
+
+    public Map<Item, CustomArmorBar> getItemList() {
+        return itemList;
+    }
+
+    public boolean isLoaded() {
+        return armorList != null && itemList != null;
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(DetailArmorBar.MOD_ID, "armor");
+    }
+
+    @Override
+    protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager manager, ProfilerFiller profiler) {
+        ImmutableMap.Builder<Item, CustomArmorBar> armorBuilder =
+                ImmutableMap.<Item, CustomArmorBar>builder().putAll(DetailArmorBarAPI.getStaticArmorBarList());
+
+        ImmutableMap.Builder<Item, CustomArmorBar> itemBarBuilder =
+                ImmutableMap.<Item, CustomArmorBar>builder().putAll(DetailArmorBarAPI.getStaticItemBarList());
+
+        prepared.forEach((id, json) -> {
+            try {
+                JsonObject root = json.getAsJsonObject();
+                JsonElement itemsJson = root.get("items");
+                JsonElement rendererJson = root.get("render");
+                String type = root.get("type").getAsString();
+
+                if(!itemsJson.isJsonArray()) {
+                    DetailArmorBar.LOGGER.error("Missing or broken item list in armor definition {}", id);
+                    return;
+                } else if(!rendererJson.isJsonObject()) {
+                    DetailArmorBar.LOGGER.error("Missing or broken renderer in armor definition {}", id);
+                    return;
+                }
+
+                if(type.equals("armor")) {
+                    Optional<Item[]> items = Codec.list(ResourceLocation.CODEC)
+                            .decode(JsonOps.INSTANCE, itemsJson)
+                            .resultOrPartial(err -> DetailArmorBar.LOGGER.error("Invalid items in armor definition [{}]: {}", id, err))
+                            .map(pair -> pair.getFirst().stream()
+                                    .map(itemId -> new ItemStack(BuiltInRegistries.ITEM.get(itemId)))
+                                    .filter(this::filterAndLogArmor)
+                                    .toArray(Item[]::new));
+
+                    Optional<ArmorBarRenderManager> renderer = ArmorBarRenderManager.CODEC.decode(JsonOps.INSTANCE, rendererJson)
+                            .resultOrPartial(err -> DetailArmorBar.LOGGER.error("Failed to load render manager [{}]: {}", id, err))
+                            .map(Pair::getFirst);
+
+                    // TODO: Rendering predicates and stuff
+                    Optional<CustomArmorBar> barOpt = renderer.map(r -> new CustomArmorBar(stack -> r));
+
+                    items.ifPresentOrElse(list -> barOpt.ifPresentOrElse(bar -> {
+                                for (Item item : list) {
+                                    armorBuilder.put(item, bar);
+                                }
+                            }, () -> DetailArmorBar.LOGGER.error("Armor definition {} is missing a renderer!", id)),
+                            () -> DetailArmorBar.LOGGER.error("Invalid or empty item list in armor definition {}", id));
+
+                } else if (type.equals("item")) {
+                    Optional<Item[]> items = Codec.list(ResourceLocation.CODEC)
+                            .decode(JsonOps.INSTANCE, itemsJson)
+                            .resultOrPartial(err -> DetailArmorBar.LOGGER.error("Invalid items in item definition [{}]: {}", id, err))
+                            .map(pair -> pair.getFirst().stream()
+                                    .map(BuiltInRegistries.ITEM::get)
+                                    .toArray(Item[]::new));
+
+                    Optional<ItemBarRenderManager> renderer = ItemBarRenderManager.CODEC.decode(JsonOps.INSTANCE, rendererJson)
+                            .resultOrPartial(err -> DetailArmorBar.LOGGER.error("Failed to load item render manager [{}]: {}", id, err))
+                            .map(Pair::getFirst);
+
+                    // TODO: Rendering predicates and stuff
+                    Optional<CustomArmorBar> barOpt = renderer.map(r -> new CustomArmorBar(stack -> r));
+
+                    items.ifPresentOrElse(list -> barOpt.ifPresentOrElse(bar -> {
+                                for (Item item : list) {
+                                    itemBarBuilder.put(item, bar);
+                                }
+                            }, () -> DetailArmorBar.LOGGER.error("Item definition {} is missing a renderer!", id)),
+                            () -> DetailArmorBar.LOGGER.error("Invalid or empty item list in item definition {}", id));
+
+                } else {
+                    throw new IllegalArgumentException("Invalid type " + type);
+                }
+            } catch (Exception ex) {
+                DetailArmorBar.LOGGER.error("Failed to load armor definition [{}]: {}", id, ex);
+            }
+
+        });
+        armorList = armorBuilder.buildKeepingLast();
+        itemList = itemBarBuilder.buildKeepingLast();
+        
+        ArmorTrimHandler.clearCache();
+        DetailArmorBar.LOGGER.info("Resource pack reloaded - cleared armor trim texture cache");
+    }
+
+    private boolean filterAndLogArmor(ItemStack stack) {
+        if (stack.getItem() instanceof ArmorItem) {
+            return true;
+        }
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (!stack.getAttributeModifiers(slot).get(Attributes.ARMOR).isEmpty()) return true;
+        }
+        DetailArmorBar.LOGGER.warn("Non-armor item: {}", stack.getItem());
+        return false;
+    }
+}

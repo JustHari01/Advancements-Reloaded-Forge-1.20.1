@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "detailabreconst",
+  "version": "${version}",
+  "name": "Detail Armor Bar Reconstructed 1.20.1 (Unofficial Port)",
+  "description": "Show more details of armors in Armor bar!",
+  "authors": [
+    "coredex-source (upstream maintainer)",
+    "JustHari01 (1.20.1 Fabric port)"
+  ],
+  "contributors": [
+    "RedLime - orignal author",
+    "coredex-source - current maintainer",
+    "snessim",
+    "Heamaci",
+    "ram6ert or rambert"
+  ],
+  "contact": {
+    "sources": "https://github.com/coredex-source/DetailArmorBarReconstructed"
+  },
+  "license": "MIT",
+  "icon": "assets/detailab/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "default",
+        "value": "com.redlimerl.detailab.DetailArmorBar"
+      }
+    ],
+    "modmenu": [
+      "com.redlimerl.detailab.config.ModMenuConfigImpl"
+    ]
+  },
+  "mixins": [
+    "detailab.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "fabric-api": "*",
+    "minecraft": "1.20.1",
+    "java": ">=17"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "detailab-compat": "*"
+  }
+}

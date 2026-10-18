@@ -1,67 +1,69 @@
 plugins {
-    id 'java'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version "${loomVersion}"
+    id 'maven-publish'
 }
-group = 'codes.atomys.advr'
-version = '0.6.1-hari.1'
-base.archivesName = 'advancements-reloaded-forge-1.20.1'
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-java.withSourcesJar()
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
-    runs {
-        client {
-            workingDirectory project.file('run-client')
-            property 'forge.logging.console.level', 'info'
-            property 'advr.qa', project.findProperty('qa') ?: 'false'
-            mods { advancements_reloaded { source sourceSets.main } }
-        }
-        server {
-            workingDirectory project.file('run-server')
-            args '--nogui'
-            mods { advancements_reloaded { source sourceSets.main } }
-        }
+
+java{
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+base {
+    version = project.modVersion
+    group = project.mavenGroup
+}
+
+repositories {
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
     }
 }
-sourceSets.main {
-    java.srcDirs = ['common/src/main/java', 'forge/src/main/java']
-    resources.srcDirs = ['common/src/main/resources', 'forge/src/main/resources']
-    resources.exclude 'advancements_reloaded.accesswidener'
-}
-// Fixture harness is compiled only for an explicitly requested QA run.
-if (project.hasProperty('qa')) {
-    sourceSets.main.java.srcDir 'qa/src/main/java'
-}
-repositories {
-    maven { url = 'https://maven.shedaniel.me/' }
-    mavenCentral()
-}
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
-    implementation fg.deobf('me.shedaniel.cloth:cloth-config-forge:11.1.136')
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loaderVersion}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}"
+
+    modImplementation "com.terraformersmc:modmenu:$project.modMenuVersion"
 }
-mixin {
-    add sourceSets.main, 'advancements_reloaded.refmap.json'
-    config 'advancements_reloaded.mixins.json'
-}
+
 processResources {
-    inputs.property 'version', project.version
-    filesMatching('META-INF/mods.toml') { expand version: project.version }
+    inputs.property "version", version
+
+    filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
 }
+
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.release = 17
+    it.options.encoding = "UTF-8"
+    it.options.release = 17
 }
+
+java {
+    withSourcesJar()
+}
+
 jar {
-    from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
-    manifest.attributes('MixinConfigs': 'advancements_reloaded.mixins.json')
-    finalizedBy 'reobfJar'
+    from("LICENSE") {
+        rename { "${it}_${archivesName}"}
+    }
 }
-sourcesJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+    }
 }
