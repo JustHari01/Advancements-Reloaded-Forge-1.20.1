@@ -1,0 +1,30 @@
+modLoader = "javafml"
+loaderVersion="[1,)"
+license="${license}"
+showAsResourcePack=false
+
+[[mods]]
+modId="${id}"
+version="${version}"
+displayName="${display_name}"
+authors="${author}"
+description="${description}"
+logoFile="assets/${namespace}/textures/mod_logo.png"
+displayURL = "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/sodium-leaf-culling-1.20.1"
+
+[[mixins]]
+config = "mixins.${id}.json"
+
+[[dependencies."${id}"]]
+modId="minecraft"
+mandatory=true
+versionRange="${mc}"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies."${id}"]]
+modId="embeddium"
+mandatory=true
+versionRange="[0.3.31,)"
+ordering="AFTER"
+side="CLIENT"

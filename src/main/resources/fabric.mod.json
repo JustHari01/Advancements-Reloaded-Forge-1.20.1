@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "${id}",
+	"name": "${display_name}",
+	"version": "${version}",
+	"description": "${description}",
+	"authors": [
+		"${author}"
+	],
+	"contact": {
+		"sources": "https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/sodium-leaf-culling-1.20.1"
+	},
+	"license": "${license}",
+	"icon": "assets/${namespace}/textures/mod_logo.png",
+	"environment": "client",
+	"mixins": [
+		"mixins.${id}.json"
+	],
+	"entrypoints" : {
+		"mixinsquared": [
+			"${group}.${namespace}.LeafCullingMixinCanceller"
+		]
+	},
+	"depends": {
+		"minecraft": "${mc}",
+		"fabricloader": ">=0.15.0",
+		"fabric-api": "*",
+		"sodium": "*",
+		"indium": "*"
+	},
+	"accessWidener": "${id}.accesswidener"
+}

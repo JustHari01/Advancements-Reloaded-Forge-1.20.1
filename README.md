@@ -1,40 +1,22 @@
-# Advancements Reloaded (UNOFFICIAL)
+# Sodium Leaf Culling — Unofficial 1.20.1 Port
 
-An unofficial **Forge 1.20.1 backport** of Advancements Reloaded **v0.6.1-1.21.1**. View the advancement tree across the screen, inspect completed and missing criteria in a sidebar, sort tabs and criteria alphabetically, and configure the layout through Cloth Config.
+An unofficial third-party backport of [Sodium Leaf Culling](https://github.com/txnimc/SodiumLeafCulling) for Minecraft 1.20.1, with Fabric and Forge builds. The original project is by toni; this port is maintained by JustHari01 and is not an official upstream release.
 
-This is a community backport maintained by Hari. It is not an official release from, or endorsed by, 42atomys or gbl.
+The mod adds four leaf rendering modes to Sodium-compatible performance settings: **None**, **Hollow**, **Solid**, and **Solid Aggressive**. The culling behavior is implemented by the upstream MIT-licensed code.
 
-## Installation
+## Dependencies
 
-- Minecraft Java Edition **1.20.1**, **Forge 47**, and **Java 17**.
-- Install **Cloth Config 11.1.136 or a compatible newer 11.x Forge release**.
-- Put the release JAR in the client's `mods` directory. Servers do not need it.
-- Open Advancements with the usual key (default `L`) or the pause menu. Click an advancement to inspect its criteria; scroll the sidebar or drag the tree. Open the configuration through the Forge Mods screen.
+- **Fabric:** Fabric Loader 0.15+, Fabric API, Sodium 0.5.11, and Indium 1.0.34 for Minecraft 1.20.1.
+- **Forge:** Minecraft Forge 47.3.7 and Embeddium 0.3.31 for Minecraft 1.20.1.
 
-Do not install alongside another build of AdvancementInfo / Advancements Reloaded with the same mod ID. Other advancement-screen replacement mods may conflict.
+Use the corresponding loader build. Do not install the Fabric and Forge jars together.
 
-## Scope and limitations
+## License and attribution
 
-This beta ports the 0.6.1 feature set. Advancement search introduced in later upstream versions is not included. The inherited transparent-background limitation on Forge remains. Test a copied profile before adding this beta to a large modpack.
+The source code is distributed under the MIT License. The original copyright and license notice are preserved in [`LICENSE.md`](LICENSE.md). The icon in this port is an independently created replacement; upstream artwork is not included.
 
-The automated fixture harness launched a real Minecraft 1.20.1 / Forge 47.4.20 client and checked alphabetical tabs, 40 criteria including a name with spaces, partial progress, sidebar scrolling, three backgrounds, GUI scaling, configuration rendering, reopening, server reset and empty state. Six screenshots were visually checked. These tests use synthetic packets and do not certify an installed modpack, multiplayer session or every datapack.
+## Port source
 
-## Credits and license
+The source for this Minecraft 1.20.1 Fabric and Forge port is maintained on the [`sodium-leaf-culling-1.20.1` branch](https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1/tree/sodium-leaf-culling-1.20.1). The upstream project is [txnimc/SodiumLeafCulling](https://github.com/txnimc/SodiumLeafCulling).
 
-- Original Advancements Reloaded by **42atomys**: https://github.com/42atomys/mc-advancements-reloaded
-- Base tag: **v0.6.1-1.21.1**.
-- Earlier AdvancementInfo by **gbl**: https://github.com/gbl/AdvancementInfo
-- Original release: https://modrinth.com/mod/advancements-reloaded
-- This backport's source and support: https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1
-
-The upstream MIT license and copyright notice are retained in `LICENSE`. See `HARI-PORT-NOTICE.md` for backport attribution. The icon is the upstream MIT-licensed icon. Minecraft GUI textures are referenced from the installed game and are not redistributed here.
-
-## Build and reproduce checks
-
-With JDK 17, run `./gradlew build` (`gradlew.bat build` on Windows). Release files are in `build/libs`.
-
-For the fixture UI check, run `./gradlew runClient -Pqa=true`. The QA harness exists only in that explicitly requested QA build and shuts down after printing `[ADVR-QA] PASS` or `FAIL`. Screenshots are written in `run-client/screenshots`. **Run `./gradlew clean build` without `-Pqa` afterwards** to produce a release without the harness.
-
-The root Gradle project builds only Forge 1.20.1. Historical Fabric/NeoForge directories are retained for upstream provenance and are not release targets of this fork. The scripts in `tools` record the one-time migration; they are not required to build and should not be rerun on the finished tree.
-
-AI disclosure: AI assisted the port code and release documentation. This statement concerns this backport, not the original authors' work.
+This port and its original project icon were prepared with AI assistance.
