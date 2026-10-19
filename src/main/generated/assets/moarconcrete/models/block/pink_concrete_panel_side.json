@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_side",
+  "textures": {
+    "edge": "moarconcrete:block/pink_concrete_panel_top",
+    "pane": "moarconcrete:block/pink_concrete_texture"
+  }
+}

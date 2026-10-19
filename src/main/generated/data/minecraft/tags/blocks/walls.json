@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "moarconcrete:white_concrete_wall",
+    "moarconcrete:light_gray_concrete_wall",
+    "moarconcrete:gray_concrete_wall",
+    "moarconcrete:black_concrete_wall",
+    "moarconcrete:brown_concrete_wall",
+    "moarconcrete:red_concrete_wall",
+    "moarconcrete:orange_concrete_wall",
+    "moarconcrete:yellow_concrete_wall",
+    "moarconcrete:lime_concrete_wall",
+    "moarconcrete:green_concrete_wall",
+    "moarconcrete:cyan_concrete_wall",
+    "moarconcrete:light_blue_concrete_wall",
+    "moarconcrete:blue_concrete_wall",
+    "moarconcrete:purple_concrete_wall",
+    "moarconcrete:magenta_concrete_wall",
+    "moarconcrete:pink_concrete_wall"
+  ]
+}

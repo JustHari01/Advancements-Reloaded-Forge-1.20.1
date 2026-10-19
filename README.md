@@ -1,40 +1,26 @@
-# Advancements Reloaded (UNOFFICIAL)
+# Moar Concrete — Fabric 1.20.1 unofficial backport
 
-An unofficial **Forge 1.20.1 backport** of Advancements Reloaded **v0.6.1-1.21.1**. View the advancement tree across the screen, inspect completed and missing criteria in a sidebar, sort tabs and criteria alphabetically, and configure the layout through Cloth Config.
+This project backports **Moar Concrete 1.3.1** by McJamweasel from Minecraft 1.21.1 to Fabric 1.20.1. It preserves the upstream block set and recipes: all 16 concrete colors with stairs, slabs, walls, fences, fence gates, buttons, concrete bricks and brick slabs, and concrete panels. Blocks use Minecraft's vanilla concrete textures.
 
-This is a community backport maintained by Hari. It is not an official release from, or endorsed by, 42atomys or gbl.
+The port is unofficial and is not endorsed by McJamweasel. Upstream project and source:
 
-## Installation
+- Modrinth: https://modrinth.com/mod/moar-concrete
+- Source branch: https://github.com/mcjamweasel/moar-concrete-mod-1.21/tree/1.3.1
 
-- Minecraft Java Edition **1.20.1**, **Forge 47**, and **Java 17**.
-- Install **Cloth Config 11.1.136 or a compatible newer 11.x Forge release**.
-- Put the release JAR in the client's `mods` directory. Servers do not need it.
-- Open Advancements with the usual key (default `L`) or the pause menu. Click an advancement to inspect its criteria; scroll the sidebar or drag the tree. Open the configuration through the Forge Mods screen.
+## Requirements
 
-Do not install alongside another build of AdvancementInfo / Advancements Reloaded with the same mod ID. Other advancement-screen replacement mods may conflict.
+- Minecraft 1.20.1
+- Fabric Loader 0.15.11 or newer
+- Fabric API for Minecraft 1.20.1
+- Java 17 or newer
 
-## Scope and limitations
+Install the matching Fabric API and this backport on both the client and server. The project uses MIT, as declared by the upstream Modrinth project and its `fabric.mod.json`; the original author is credited above and in `LICENSE`.
 
-This beta ports the 0.6.1 feature set. Advancement search introduced in later upstream versions is not included. The inherited transparent-background limitation on Forge remains. Test a copied profile before adding this beta to a large modpack.
+## Build and data generation
 
-The automated fixture harness launched a real Minecraft 1.20.1 / Forge 47.4.20 client and checked alphabetical tabs, 40 criteria including a name with spaces, partial progress, sidebar scrolling, three backgrounds, GUI scaling, configuration rendering, reopening, server reset and empty state. Six screenshots were visually checked. These tests use synthetic packets and do not certify an installed modpack, multiplayer session or every datapack.
+```powershell
+.\gradlew.bat clean runDatagen --no-daemon
+.\gradlew.bat processResources build --no-daemon
+```
 
-## Credits and license
-
-- Original Advancements Reloaded by **42atomys**: https://github.com/42atomys/mc-advancements-reloaded
-- Base tag: **v0.6.1-1.21.1**.
-- Earlier AdvancementInfo by **gbl**: https://github.com/gbl/AdvancementInfo
-- Original release: https://modrinth.com/mod/advancements-reloaded
-- This backport's source and support: https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1
-
-The upstream MIT license and copyright notice are retained in `LICENSE`. See `HARI-PORT-NOTICE.md` for backport attribution. The icon is the upstream MIT-licensed icon. Minecraft GUI textures are referenced from the installed game and are not redistributed here.
-
-## Build and reproduce checks
-
-With JDK 17, run `./gradlew build` (`gradlew.bat build` on Windows). Release files are in `build/libs`.
-
-For the fixture UI check, run `./gradlew runClient -Pqa=true`. The QA harness exists only in that explicitly requested QA build and shuts down after printing `[ADVR-QA] PASS` or `FAIL`. Screenshots are written in `run-client/screenshots`. **Run `./gradlew clean build` without `-Pqa` afterwards** to produce a release without the harness.
-
-The root Gradle project builds only Forge 1.20.1. Historical Fabric/NeoForge directories are retained for upstream provenance and are not release targets of this fork. The scripts in `tools` record the one-time migration; they are not required to build and should not be rerun on the finished tree.
-
-AI disclosure: AI assisted the port code and release documentation. This statement concerns this backport, not the original authors' work.
+AI disclosure: AI tools assisted with the 1.20.1 API adaptation and release documentation.

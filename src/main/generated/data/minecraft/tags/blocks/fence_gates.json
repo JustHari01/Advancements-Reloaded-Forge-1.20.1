@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "moarconcrete:white_concrete_gate",
+    "moarconcrete:light_gray_concrete_gate",
+    "moarconcrete:gray_concrete_gate",
+    "moarconcrete:black_concrete_gate",
+    "moarconcrete:brown_concrete_gate",
+    "moarconcrete:red_concrete_gate",
+    "moarconcrete:orange_concrete_gate",
+    "moarconcrete:yellow_concrete_gate",
+    "moarconcrete:lime_concrete_gate",
+    "moarconcrete:green_concrete_gate",
+    "moarconcrete:cyan_concrete_gate",
+    "moarconcrete:light_blue_concrete_gate",
+    "moarconcrete:blue_concrete_gate",
+    "moarconcrete:purple_concrete_gate",
+    "moarconcrete:magenta_concrete_gate",
+    "moarconcrete:pink_concrete_gate"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_side_alt",
+  "textures": {
+    "edge": "moarconcrete:block/lime_concrete_panel_top",
+    "pane": "moarconcrete:block/lime_concrete_texture"
+  }
+}

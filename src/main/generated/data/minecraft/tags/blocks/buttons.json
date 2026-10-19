@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "moarconcrete:white_concrete_button",
+    "moarconcrete:light_gray_concrete_button",
+    "moarconcrete:gray_concrete_button",
+    "moarconcrete:black_concrete_button",
+    "moarconcrete:brown_concrete_button",
+    "moarconcrete:red_concrete_button",
+    "moarconcrete:orange_concrete_button",
+    "moarconcrete:yellow_concrete_button",
+    "moarconcrete:lime_concrete_button",
+    "moarconcrete:green_concrete_button",
+    "moarconcrete:cyan_concrete_button",
+    "moarconcrete:light_blue_concrete_button",
+    "moarconcrete:blue_concrete_button",
+    "moarconcrete:purple_concrete_button",
+    "moarconcrete:magenta_concrete_button",
+    "moarconcrete:pink_concrete_button"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "moarconcrete:block/cyan_concrete_brick_slab"
+    },
+    "type=double": {
+      "model": "moarconcrete:block/cyan_concrete_bricks"
+    },
+    "type=top": {
+      "model": "moarconcrete:block/cyan_concrete_brick_slab_top"
+    }
+  }
+}

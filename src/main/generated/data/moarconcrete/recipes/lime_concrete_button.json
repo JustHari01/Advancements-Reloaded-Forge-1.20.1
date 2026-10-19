@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "concrete_buttons",
+  "ingredients": [
+    {
+      "item": "minecraft:lime_concrete"
+    }
+  ],
+  "result": {
+    "item": "moarconcrete:lime_concrete_button"
+  }
+}

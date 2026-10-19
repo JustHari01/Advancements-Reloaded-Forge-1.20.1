@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_post",
+  "textures": {
+    "edge": "moarconcrete:block/light_gray_concrete_panel_top",
+    "pane": "moarconcrete:block/light_gray_concrete_texture"
+  }
+}

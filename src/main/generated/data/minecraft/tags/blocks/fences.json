@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "moarconcrete:white_concrete_fence",
+    "moarconcrete:light_gray_concrete_fence",
+    "moarconcrete:gray_concrete_fence",
+    "moarconcrete:black_concrete_fence",
+    "moarconcrete:brown_concrete_fence",
+    "moarconcrete:red_concrete_fence",
+    "moarconcrete:orange_concrete_fence",
+    "moarconcrete:yellow_concrete_fence",
+    "moarconcrete:lime_concrete_fence",
+    "moarconcrete:green_concrete_fence",
+    "moarconcrete:cyan_concrete_fence",
+    "moarconcrete:light_blue_concrete_fence",
+    "moarconcrete:blue_concrete_fence",
+    "moarconcrete:purple_concrete_fence",
+    "moarconcrete:magenta_concrete_fence",
+    "moarconcrete:pink_concrete_fence"
+  ]
+}

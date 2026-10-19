@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "item": "minecraft:white_concrete"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "pattern": [
+    "CIC",
+    "CIC",
+    "   "
+  ],
+  "result": {
+    "count": 3,
+    "item": "moarconcrete:white_concrete_fence"
+  },
+  "show_notification": true
+}

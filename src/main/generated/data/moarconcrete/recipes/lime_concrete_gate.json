@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "item": "minecraft:lime_concrete"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "pattern": [
+    "ICI",
+    "ICI",
+    "   "
+  ],
+  "result": {
+    "item": "moarconcrete:lime_concrete_gate"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 4,
+  "ingredient": {
+    "item": "minecraft:magenta_concrete"
+  },
+  "result": "moarconcrete:magenta_concrete_panel"
+}

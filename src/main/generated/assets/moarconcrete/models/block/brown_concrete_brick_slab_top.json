@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "moarconcrete:block/brown_concrete_bricks",
+    "side": "moarconcrete:block/brown_concrete_bricks",
+    "top": "moarconcrete:block/brown_concrete_bricks"
+  }
+}
