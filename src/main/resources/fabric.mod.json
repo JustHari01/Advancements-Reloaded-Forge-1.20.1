@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "moremobvariants",
+  "version": "${version}",
+
+  "name": "More Mob Variants",
+  "description": "An unofficial Minecraft 1.21.1 port of More Mob Variants by nyuppo.",
+  "authors": [
+    "nyuppo"
+  ],
+  "contributors": [
+    "LlamaLad7",
+    "KLONOA9X6",
+    "Dev0Louis",
+    "Steveplays28",
+    "fzzyhmstrs",
+    "amyavi",
+    "hisakid"
+  ],
+  "contact": {
+    "homepage": "https://nyuppo.github.io/moremobvariants/"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/moremobvariants/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.nyuppo.MoreMobVariants"
+    ],
+    "client": [
+      "com.github.nyuppo.MoreMobVariantsClient"
+    ]
+  },
+  "mixins": [
+    "moremobvariants.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "accessWidener": "moremobvariants.accesswidener"
+}

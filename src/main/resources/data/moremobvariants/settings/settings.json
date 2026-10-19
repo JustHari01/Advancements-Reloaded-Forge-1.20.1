@@ -1,0 +1,5 @@
+{
+  "enable_muddy_pigs": true,
+  "muddy_pig_timeout": 0,
+  "child_random_variant_chance": 0.25
+}

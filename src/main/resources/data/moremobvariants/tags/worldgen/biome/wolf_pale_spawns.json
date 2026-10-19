@@ -1,0 +1,18 @@
+{
+  "values": [
+    "minecraft:taiga",
+
+    {
+      "id": "regions_unexplored:alpha_grove",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:pine_slopes",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:maple_forest",
+      "required": false
+    }
+  ]
+}

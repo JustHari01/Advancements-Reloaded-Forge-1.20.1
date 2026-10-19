@@ -5,47 +5,29 @@ build/
 out/
 classes/
 
+# eclipse
+
+*.launch
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
 # macos
 
 *.DS_Store
 
-# projects
+# fabric
+
 run/
-bin/
-
-# java
-hs_err_*.log
-replay_*.log
-*.hprof
-*.jfr
-
-**/build/
-bin/*
-!src/**/build/
-.architectury-transformer
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
-
-# Cache of project
-.gradletasknamecache
-remappedSrc
-
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-# Local runtime and verification output
-run-client/
-run-server/
-*.log
-release/
-tools/publish-beta.ps1

@@ -1,67 +1,77 @@
 plugins {
-    id 'java'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'maven-publish'
 }
-group = 'codes.atomys.advr'
-version = '0.6.1-hari.1'
-base.archivesName = 'advancements-reloaded-forge-1.20.1'
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-java.withSourcesJar()
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
-    runs {
-        client {
-            workingDirectory project.file('run-client')
-            property 'forge.logging.console.level', 'info'
-            property 'advr.qa', project.findProperty('qa') ?: 'false'
-            mods { advancements_reloaded { source sourceSets.main } }
-        }
-        server {
-            workingDirectory project.file('run-server')
-            args '--nogui'
-            mods { advancements_reloaded { source sourceSets.main } }
-        }
-    }
-}
-sourceSets.main {
-    java.srcDirs = ['common/src/main/java', 'forge/src/main/java']
-    resources.srcDirs = ['common/src/main/resources', 'forge/src/main/resources']
-    resources.exclude 'advancements_reloaded.accesswidener'
-}
-// Fixture harness is compiled only for an explicitly requested QA run.
-if (project.hasProperty('qa')) {
-    sourceSets.main.java.srcDir 'qa/src/main/java'
-}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
 repositories {
-    maven { url = 'https://maven.shedaniel.me/' }
-    mavenCentral()
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
+	maven { url 'https://maven.nucleoid.xyz' } // You should have it
 }
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
-    implementation fg.deobf('me.shedaniel.cloth:cloth-config-forge:11.1.136')
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
-mixin {
-    add sourceSets.main, 'advancements_reloaded.refmap.json'
-    config 'advancements_reloaded.mixins.json'
-}
+
 processResources {
-    inputs.property 'version', project.version
-    filesMatching('META-INF/mods.toml') { expand version: project.version }
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
 }
+
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.release = 17
+	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+	it.options.release = 21
 }
+
+loom {
+	accessWidenerPath = file("src/main/resources/moremobvariants.accesswidener")
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+}
+
 jar {
-    from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
-    manifest.attributes('MixinConfigs': 'advancements_reloaded.mixins.json')
-    finalizedBy 'reobfJar'
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
 }
-sourcesJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from('LICENSE')
-    from('HARI-PORT-NOTICE.md')
+
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
 }
