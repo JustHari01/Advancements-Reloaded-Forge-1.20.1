@@ -1,40 +1,33 @@
-# Advancements Reloaded (UNOFFICIAL)
+<p align="center"><img src="https://imgur.com/oPVtrP5.png" alt="Logo" width="672"></p>
 
-An unofficial **Forge 1.20.1 backport** of Advancements Reloaded **v0.6.1-1.21.1**. View the advancement tree across the screen, inspect completed and missing criteria in a sidebar, sort tabs and criteria alphabetically, and configure the layout through Cloth Config.
+<p align="center">
+  <i>To advance the ancient history of the nether dimension</i>
+</p>
+<h1 align="center">
+	<a href="https://www.curseforge.com/minecraft/mc-mods/bygone-nether/files"><img src="https://img.shields.io/badge/Minecraft-1.16.5+-c9aa4b" alt="Supported Versions"></a>
+	<a href="https://github.com/izofar/bygone-nether/blob/1.18.2/LICENSE.txt"><img src="https://img.shields.io/github/license/Creators-of-Create/Create?style=flat&color=900c3f" alt="License"></a>
+	<a href="https://www.curseforge.com/minecraft/mc-mods/bygone-nether"><img src="http://cf.way2muchnoise.eu/bygone-nether.svg" alt="CF"></a>
+    <a href="https://modrinth.com/mod/bygone-nether"><img src="https://img.shields.io/modrinth/dt/bygone-nether?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
+    <br><br>
+</h1>
+<hr/>
 
-This is a community backport maintained by Hari. It is not an official release from, or endorsed by, 42atomys or gbl.
+Welcome to the **Bygone Nether** GitHub page! Explore new structures, fight and befriend new mobs, gather new resources and win new loot!
 
-## Installation
+## Unofficial NeoForge 1.21.1 port
 
-- Minecraft Java Edition **1.20.1**, **Forge 47**, and **Java 17**.
-- Install **Cloth Config 11.1.136 or a compatible newer 11.x Forge release**.
-- Put the release JAR in the client's `mods` directory. Servers do not need it.
-- Open Advancements with the usual key (default `L`) or the pause menu. Click an advancement to inspect its criteria; scroll the sidebar or drag the tree. Open the configuration through the Forge Mods screen.
+This repository contains an unofficial NeoForge 1.21.1 port based on Izofar's Bygone Nether source. The original project and its assets are distributed under the MIT License; see [LICENSE.txt](LICENSE.txt). Upstream project: [izofar/bygone-nether](https://github.com/izofar/bygone-nether). This port is not an official release or endorsement by the original author.
 
-Do not install alongside another build of AdvancementInfo / Advancements Reloaded with the same mod ID. Other advancement-screen replacement mods may conflict.
+Porting changes used AI assistance. The port is still being tested; a successful compile or package does not by itself confirm that every feature works in game.
 
-## Scope and limitations
+## Local QA status (2026-10-18)
 
-This beta ports the 0.6.1 feature set. Advancement search introduced in later upstream versions is not included. The inherited transparent-background limitation on Forge remains. Test a copied profile before adding this beta to a large modpack.
+The clean Gradle build succeeded for Minecraft 1.21.1 and NeoForge 21.1.254. The dev client opened a singleplayer test world, and the dedicated dev server started and saved successfully. Nether structure lookup and force-loading completed for Catacomb, Citadel, and Piglin Manor. Full survival gameplay, exploration, and visual checks remain incomplete, so this build is published as an alpha port rather than a fully verified release.
 
-The automated fixture harness launched a real Minecraft 1.20.1 / Forge 47.4.20 client and checked alphabetical tabs, 40 criteria including a name with spaces, partial progress, sidebar scrolling, three backgrounds, GUI scaling, configuration rendering, reopening, server reset and empty state. Six screenshots were visually checked. These tests use synthetic packets and do not certify an installed modpack, multiplayer session or every datapack.
+Having been conceived as part of a Vanilla+ mod to bring back alpha difficulty, **Bygone Nether** has grown to be one of the most downloaded nether mods! I semi-frequently update for bug-fixes, new features, and ports to the latest Minecraft versions!
 
-## Credits and license
+<hr/>
+<h4 align="center">Find out more about Bygone Nether on <a href="https://www.curseforge.com/minecraft/mc-mods/bygone-nether">Curseforge</a> or <a href="https://modrinth.com/mod/bygone-nether">Modrinth</a> Page</h4>
+<h4 align="center">Looking for the Fabric port? <a href="https://www.curseforge.com/minecraft/mc-mods/bygone-nether-fabric">Find it here on Curseforge</a></h4>
 
-- Original Advancements Reloaded by **42atomys**: https://github.com/42atomys/mc-advancements-reloaded
-- Base tag: **v0.6.1-1.21.1**.
-- Earlier AdvancementInfo by **gbl**: https://github.com/gbl/AdvancementInfo
-- Original release: https://modrinth.com/mod/advancements-reloaded
-- This backport's source and support: https://github.com/JustHari01/Advancements-Reloaded-Forge-1.20.1
-
-The upstream MIT license and copyright notice are retained in `LICENSE`. See `HARI-PORT-NOTICE.md` for backport attribution. The icon is the upstream MIT-licensed icon. Minecraft GUI textures are referenced from the installed game and are not redistributed here.
-
-## Build and reproduce checks
-
-With JDK 17, run `./gradlew build` (`gradlew.bat build` on Windows). Release files are in `build/libs`.
-
-For the fixture UI check, run `./gradlew runClient -Pqa=true`. The QA harness exists only in that explicitly requested QA build and shuts down after printing `[ADVR-QA] PASS` or `FAIL`. Screenshots are written in `run-client/screenshots`. **Run `./gradlew clean build` without `-Pqa` afterwards** to produce a release without the harness.
-
-The root Gradle project builds only Forge 1.20.1. Historical Fabric/NeoForge directories are retained for upstream provenance and are not release targets of this fork. The scripts in `tools` record the one-time migration; they are not required to build and should not be rerun on the finished tree.
-
-AI disclosure: AI assisted the port code and release documentation. This statement concerns this backport, not the original authors' work.
+AI disclosure: AI tools assisted with the NeoForge port and compatibility changes; the original art and other assets were retained from the MIT-licensed upstream project.

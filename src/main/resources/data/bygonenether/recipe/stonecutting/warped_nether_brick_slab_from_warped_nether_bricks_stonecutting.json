@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "bygonenether:warped_nether_bricks"
+  },
+  "result": {
+    "id": "bygonenether:warped_nether_brick_slab",
+    "count": 2
+  }
+}

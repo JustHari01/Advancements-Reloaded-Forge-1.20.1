@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "bygonenether:soul_stone",
+      "required": false
+    },
+    {
+      "id": "quark:soul_stone",
+      "required": false
+    }
+  ]
+}

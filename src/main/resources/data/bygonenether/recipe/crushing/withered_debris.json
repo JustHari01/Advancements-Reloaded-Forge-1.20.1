@@ -1,0 +1,30 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "bygonenether:withered_debris"
+    }
+  ],
+  "results": [
+    {
+      "id": "bygonenether:crushed_withered_debris",
+      "count": 1
+    },
+    {
+      "id": "bygonenether:crushed_withered_debris",
+      "chance": 0.125,
+      "count": 2
+    },
+    {
+      "id": "bygonenether:netherite_scrap_nugget",
+      "chance": 0.025
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "processing_time": 250
+}

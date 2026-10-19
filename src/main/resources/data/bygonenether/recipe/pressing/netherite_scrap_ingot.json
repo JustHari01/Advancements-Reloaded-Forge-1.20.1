@@ -1,0 +1,19 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "bygonenether:netherite_scrap_ingot"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:netherite_scrap"
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "bygonenether:cracked_withered_blackstone"
+  },
+  "result": {
+    "id": "bygonenether:cracked_withered_blackstone_vertical_slab",
+    "count": 2
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "quark"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    },
+    {
+      "item": "bygonenether:netherite_scrap_nugget"
+    }
+  ],
+  "results": [
+    {
+      "id": "bygonenether:netherite_scrap_ingot",
+      "count": 1
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "heat_requirement": "heated"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "bygonenether:warped_nether_brick_stairs"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:nether_brick_stairs",
+      "count": 1
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

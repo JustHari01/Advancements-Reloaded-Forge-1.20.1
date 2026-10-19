@@ -1,0 +1,25 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "tag": "bygonenether:withered_stone_slab"
+    }
+  ],
+  "results": [
+    {
+      "id": "bygonenether:crushed_withered_debris",
+      "chance": 0.0075
+    },
+    {
+      "id": "bygonenether:netherite_scrap_nugget",
+      "chance": 0.00075
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "processing_time": 250
+}

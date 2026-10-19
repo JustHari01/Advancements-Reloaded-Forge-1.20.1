@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "bygonenether:withered_blackstone"
+  },
+  "result": {
+    "id": "bygonenether:chiseled_withered_blackstone",
+    "count": 1
+  }
+}
